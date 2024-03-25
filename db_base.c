@@ -93,6 +93,30 @@ static delete_db_struct(db_struct_t *db_struct)
     free(db_struct);
 }
 
+STATUS_T generate_db_id(char *base_db_name, int base_db_name_len, base_db_t *db_id)
+{
+    if (validate_string_and_length(base_db_name, base_db_name_len, 1, FILE_BASE_NAME_LENGTH) == STAUTS_NOK)
+    {
+        return STATUS_NOK;
+    }
+
+    if (db_id == NULL)
+    {
+        printf("db_id is null\n");
+        return STATUS_NOK;
+    }
+
+    unsigned int hash = 0;
+    int i=0;
+    for (;i < base_db_name_len; i++)
+    {
+        hash += *base_db_name++;
+    }
+
+    *db_id = hash;
+    return STATUS_OK;
+}
+}
 STATUS_T db_get(char *base_db_name, int base_db_name_len, base_db_t *base_db, IF_HAVE_FILE_BASE have, char *file_base_path, int file_base_path_len, DB_HASH_METHOD method, char *signature, int signaure_len);
 {
     if (validate_string_and_length(base_db_name, base_db_name_len, 1, 9999) == STAUTS_NOK)
@@ -123,6 +147,12 @@ STATUS_T db_get(char *base_db_name, int base_db_name_len, base_db_t *base_db, IF
         return STATUS_NOK;
     }
 
+    if (generate_db_id(base_db_name, base_db_name_len, &(db_struct->db)) == STATUS_NOK)
+    {
+        delete_db_struct(db_struct);
+        return STATUS_NOK
+    }
+
     if (IF_HAVE_FILE_BASE == HAVE_FILE_BASE)
     {
         db_struct->have = HAVE_FILE_BASE;
@@ -141,28 +171,10 @@ STATUS_T db_get(char *base_db_name, int base_db_name_len, base_db_t *base_db, IF
         {
             memcpy(db_struct->signature + SIGNATURE_PREFIX, signature, signature_len);
         }
-    }
-    return STATUS_OK;
-}
 
-STATUS_T generate_file_base_path(char *base_db_name, int base_db_name_len, char *file_base_dir, int file_base_dir_len, char *file_base_path_generated, int *file_base_path_generated_len);
-{
-    if (validate_string_and_length(base_db_name, base_db_name_len, 1, FILE_BASE_NAME_LENGTH) == STAUTS_NOK ||
-        validate_string_and_length(file_base_dir, file_base_dir_len, 1, FILE_BASE_DIR_LENGTH) == STAUTS_NOK)
-    {
-        return STATUS_NOK;
+        memcpy(db_struct->file_base_path, file_base_path, file_base_path_len);
     }
 
-    if (file_base_path_generated == NULL)
-    {
-        printf("file_base_path_generated is NULL\n");
-        returun STATUS_NOK;
-    }
-    if (file_base_path_generated_len == NULL)
-    {
-        printf("file_base_path_generated_len is NULL\n");
-        returun STATUS_NOK;
-    }
     return STATUS_OK;
 }
 

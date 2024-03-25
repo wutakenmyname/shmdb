@@ -64,7 +64,7 @@ typedef struct
     struct list_head linker;
 }db_struct_t;
 
-static LIST_HEAD(db_collection);
+static struct list_head *db_collection = NULL;
 
 static db_struct_t *new_db_struct()
 {
@@ -83,8 +83,15 @@ static db_struct_t *new_db_struct()
     memcpy(db_struct->signature, SIGNATURE_PREFIX, SIGNATURE_PREFIX_LENGHT);
     memcpy(db_struct->signature + SIGNATURE_PREFIX_LENGHT + LONGEST_SIGNATURE, SIGNATURE_SUFFIX, SIGNATURE_SUFFIX_LENGTH);
 
-    LIST_HEAD_INIT(db_struct->linker);
-    list_add(&(db_struct->linker), db_collection);
+    INIT_LIST_HEAD(&(db_struct->linker));
+    if (db_collection == NULL)
+    {
+        db_collection = &(db_struct->linker);
+    }
+    else
+    {
+        list_add(&(db_struct->linker), db_collection);
+    }
 }
 
 static delete_db_struct(db_struct_t *db_struct)
@@ -116,7 +123,7 @@ STATUS_T generate_db_id(char *base_db_name, int base_db_name_len, base_db_t *db_
     *db_id = hash;
     return STATUS_OK;
 }
-}
+
 STATUS_T db_get(char *base_db_name, int base_db_name_len, base_db_t *base_db, IF_HAVE_FILE_BASE have, char *file_base_path, int file_base_path_len, DB_HASH_METHOD method, char *signature, int signaure_len);
 {
     if (validate_string_and_length(base_db_name, base_db_name_len, 1, 9999) == STAUTS_NOK)
@@ -153,6 +160,11 @@ STATUS_T db_get(char *base_db_name, int base_db_name_len, base_db_t *base_db, IF
         return STATUS_NOK
     }
 
+    {
+        db_strcut_t db_iterator = NULL;
+        list_for_each_entry(db_iterator, db_collection, linker)
+    }
+
     if (IF_HAVE_FILE_BASE == HAVE_FILE_BASE)
     {
         db_struct->have = HAVE_FILE_BASE;
@@ -180,6 +192,12 @@ STATUS_T db_get(char *base_db_name, int base_db_name_len, base_db_t *base_db, IF
 
 STATUS_T db_retrieve_access(base_db_t base_db, void *content)
 {
+    if (content == NULL)
+    {
+        printf("content is null\n");
+        return STATUS_NOK;
+    }
+
     return STATUS_OK;
 }
 

@@ -3,6 +3,12 @@
 #include <cstddef.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/shm.h>
+#include <sys/stat.h>
+include <sys/types.h>
+#include <string.h>
+#include <openssl/sha.h>
+#include <fcntl.h>
 #include "list.h"
 #include "bool.h"
 
@@ -11,6 +17,7 @@
 #define SIGNATURE_SUFFIX_LENGTH 3
 #define SIGNATURE_PREFIX "\0\r\n"
 #define SIGNATURE_SUFFIX "\0\r\n"
+#define DEFALUT_SHM_SIZE (1024 * 1024 * 2)
 
 #define validate_string_and_length(str, len, min_len, max_len) ({\
     STATUS_T status = STATUS_OK;\
@@ -54,6 +61,7 @@
 
 
 char default_signature[LONGEST_SIGNATURE] = {0};
+int current_version = 1;
 
 typedef struct
 {
@@ -62,12 +70,56 @@ typedef struct
     char file_base_path[FILE_BASE_PATH_LENGTH];
     DB_HASH_METHOD method;
     char signature[SIGNATURE_PREFIX_LENGHT + SIGNATURE_SUFFIX_LENGTH + LONGEST_SIGNATURE];
-    char *db_content;
+    unsigned char *db_content;
     int shm_fd;
+    int shm_size;
     struct list_head linker;
 }db_struct_t;
 
+typedef struct {
+    int version;
+    int signature_offset;
+    int data_offset;
+    int hash_offset;
+    int hash_length;
+}file_base_header;
+
 static struct list_head *db_collection = NULL;
+
+static STATUS_T compute_sha256(char *data, int data_length, unsigned char *sha256_value)
+{
+    if (data == NULL || data_length <= 0)
+    {
+        printf("params are not valid\n");
+        return STATUS_NOK;
+    }
+
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, data, data_length);
+    SHA256_Final(sha256_value, &sha256);
+
+    return STATUS_OK;
+}
+
+static int get_hash_data_size(DB_HASH_METHOD method)
+{
+    int size = -1;
+    if (method >= DB_HASH_METHOD_INVALID)
+    {
+        method = DB_HASH_MDTHOD_FIRST_VALID;
+    }
+    switch (method)
+    {
+        case DB_HASH_MDTHOD_FIRST_VALID:
+        case DB_HASH_METHOD_SHA256:
+            size = 32; //bytes
+        default:
+            size = -1;
+    }
+
+    return size;
+}
 
 static bool is_generated_db_id_unique(base_db_t id)
 {
@@ -243,22 +295,96 @@ static STATUS_T validate_signature(char *signature_indeed, int signature_indeed_
 static STATUS_T prepare_content(db_struct_t *db_struct)
 {
     STATUS_T ret = STATUS_NOK;
+    int shm_fd = -1;
+    struct shmid_ds setting;
+    void *shm_addr = NULL;
+
     if (db_struct == NULL)
     {
         printf("db_struct is null\n");
         return STATUS_NOK;
     }
 
+    shm_fd = shmget(db_struct->db, IPC_CREAT | 0666);
+    if (shm_fd < 0)
+    {
+        printf("get shm failed\n");
+        return STATUS_NOK;
+    }
+
+    if (shmctl(shm_fd, IPC_STAT, &setting) < 0)
+    {
+        printf("get shm info failed\n");
+        return STATUS_NOK;
+    }
+    setting.shm_segsz = db_struct->shm_size;
+    if (shmctl(shm_fd, IPC_SET, &setting))
+    {
+        printf("set shm params failed\n");
+        return STATUS_NOK;
+    }
+
+    shm_addr = shmat(shm_fd, NULL, 0);
+    if (shm_addr == (void *)-1)
+    {
+        printf("shm failed\n");
+        return STATUS_NOK;
+    }
+
+    db_struct->db_content = (char *)shm_addr;
+
     if (db_struct->have = HAVE_FILE_BASE)
     {
         if (access(db_struct->file_base_path, F_OK) == 0)
         {
+            // to do
+            // load the file
+            char *temp_content = NULL;
+            int file_fd = -1;
+            int size = -1;
+            struct stat stat;
 
+            file_fd = open(db_struct->file_base_path, O_RDONLY);
+            if (file_fd < 0)
+            {
+                printf("open base file failed\n");
+                return STATUS_OK;
+            }
+            else
+            {
+                if (fstat(file_fd, &stat) < 0)
+                {
+                    printf("stat file failed\n");
+                    return STTUS_OK;
+                }
+                else
+                {
+                    if(stat.st_size > db_struct->shm_size)
+                    {
+                        printf("file base size is greater than shm_size\n");
+                        return STATUS_OK;
+                    }
+                    else
+                    {
+                        if (read(file_fd, db_struct->db_content, stat.st_size) != stat.st_size)
+                        {
+                            printf("read failed\n");
+                            memset(db_struct->db_content, 0, db_struct->shm_size);
+                            return STATUS_OK;
+                        }
+                        else
+                        {
+                            
+                        }
+                    }
+                }
+            }
+            
         }
     }
 }
 
-STATUS_T db_get(int shm_key, base_db_t *base_db, IF_HAVE_FILE_BASE have, char *file_base_path, int file_base_path_len, DB_HASH_METHOD method, char *signature, int signaure_len);
+STATUS_T db_get(int shm_key, base_db_t *base_db, int shm_size, IF_HAVE_FILE_BASE have, char *file_base_path, int file_base_path_len, DB_HASH_METHOD method, char *signature, int signaure_len);
 {
     if (base_db == NULL)
     {
@@ -283,7 +409,6 @@ STATUS_T db_get(int shm_key, base_db_t *base_db, IF_HAVE_FILE_BASE have, char *f
         if (signature != NULL || signature_len > 0)
         {
             memcpy(temp_signature, signature, signature_len > LONGEST_SIGNATURE ? LONGEST_SIGNATURE : signature_len);
-            
         }
         else
         {
@@ -345,6 +470,19 @@ STATUS_T db_get(int shm_key, base_db_t *base_db, IF_HAVE_FILE_BASE have, char *f
         memcpy(db_struct->file_base_path, file_base_path, file_base_path_len);
     }
 
+    if (shm_size <= 0)
+    {
+        db_struct->shm_size = DEFALUT_SHM_SIZE;
+    }
+
+    base_db = db_struct->db;
+
+    if (prepare_content(db_struct) == STATUS_NOK)
+    {
+        delete_db_struct(db_struct);
+        return STATUS_NOK;
+    }
+
     return STATUS_OK;
 }
 
@@ -362,12 +500,106 @@ void  *db_retrieve_access(base_db_t base_db)
     return db->content;
 }
 
-STATUS_T db_deinit(base_db_t base_db)
+STATUS_T db_put(base_db_t base_db)
 {
     return STATUS_OK;
 }
 
 STATUS_T db_commit(base_db_t base_db)
 {
+    db_struct_t *db_struct;
+    file_base_header header;
+    int hash_data_size = -1;
+    char *hash_value = NULL;
+    size_t bytes_written;
+
+    db_struct = find_db_struct(base_db);
+    if (db_struct == NULL)
+    {
+        printf("can not find db_struct by this id\n");
+        return STATUS_NOK;
+    }
+
+    hash_data_size = get_hash_data_size(db_struct->method);
+    if (hash_data_size <= 0)
+    {
+        printf("error: hash data size lesss than 0\n");
+        return STATUS_NOK;
+    }
+
+    hash_value= (char *)malloc(hash_data_size);
+    if (hash_value == NULL)
+    {
+        printf("malloc memory for hash value failed\n");
+        return STATUS_NOK;
+    }
+
+    memset(hash_value, 0, hash_data_size);
+    if (compute_sha256(db_struct->db_content, db_struct->shm_size, hash_value) == STATUS_NOK)
+    {
+        printf("compute_sha256 failed\n");
+        free(hash_value);
+        return STATUS_NOK;
+    }
+    
+    header.version = current_version;
+    header.signature_offset = sizeof(header);
+    header.data_offset = header.signature_offset + SIGNATURE_PREFIX_LENGHT + SIGNATURE_SUFFIX_LENGTH + LONGEST_SIGNATURE;
+    header.hash_offset = db_struct->shm_size + header.data_offset;
+    header.hash_length = hash_data_size;
+    //remvoe(db_struct->file_base_path);
+
+    FILE *file = fopen(db_struct->file_base_path, "wb");
+    if (file == NULL) {
+        printf("Failed to open file");
+        free(hash_value);
+        return STATUS_NOK;
+    }
+
+    // 将二进制数据写入文件
+    bytes_written = fwrite(&header, sizeof(unsigned char), sizeof(header), file);
+    if (bytes_written != sizeof(header)) 
+    {
+        printf("Failed to write data to file");
+        fclose(file);
+        free(hash_value);
+        remvoe(db_struct->file_base_path);
+        return STATUS_NOK;
+    }
+
+    bytes_written = fwrite(db_struct->signature, sizeof(unsigned char), sizeof(db_struct->signature), file);
+    if (bytes_written != sizeof(db_struct->signature))
+    {
+        printf("Failed to write data to file");
+        fclose(file);
+        free(hash_value);
+        remvoe(db_struct->file_base_path);
+        return STATUS_NOK;
+    }
+
+    bytes_written = fwrite(db_struct->db_content, sizeof(unsigned char), db_struct->shm_size, file);
+    if (bytes_written != db_struct->shm_size) 
+    {
+        printf("Failed to write data to file");
+        fclose(file);
+        free(hash_value);
+        remvoe(db_struct->file_base_path);
+        return STATUS_NOK;
+    }
+
+    bytes_written = fwrite(hash_value, sizeof(unsigned char), hash_data_size, file);
+    if (bytes_written != hash_data_size) 
+    {
+        printf("Failed to write data to file");
+        fclose(file);
+        free(hash_value);
+        remvoe(db_struct->file_base_path);
+        return STATUS_NOK;
+    }
+
+    // 关闭文件
+    fclose(file);
+
+    free(hash_value);
     return STATUS_OK;
 }

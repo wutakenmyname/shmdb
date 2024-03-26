@@ -22,9 +22,9 @@ typedef enum
 
 typedef int base_db_t;
 
-STATUS_T db_get(int shm_key, base_db_t *base_db, IF_HAVE_FILE_BASE have, char *file_base_path, int file_base_path_len, DB_HASH_METHOD method, char *signature, int signaure_len);
+STATUS_T db_get(int shm_key, base_db_t *base_db, int shm_size, IF_HAVE_FILE_BASE have, char *file_base_path, int file_base_path_len, DB_HASH_METHOD method, char *signature, int signaure_len);
 void *db_retrieve_access(base_db_t base_db);
-STATUS_T db_deinit(base_db_t base_db);
+STATUS_T db_put(base_db_t base_db);
 STATUS_T db_commit(base_db_t base_db);
 
 #endif

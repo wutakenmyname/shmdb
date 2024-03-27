@@ -1,36 +1,36 @@
 #include "db_base.h"
 #include <stdio.h>
-#include <cstddef.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
-include<sys / types.h>
+#include <sys/types.h>
 #include <string.h>
 #include <openssl/sha.h>
 #include <fcntl.h>
 #include "list.h"
-#include "bool.h"
+#include "mbool.h"
 
-#define DEFALUT_SHM_SIZE (1024 * 1024 * 2)
+#define MY_DEFALUT_SHM_SIZE (1024 * 1024 * 2)
 
-#define mprintf(fmt) printf("[%s,%d] " fmt, __func__, __LINE__)
+#define mprintf(fmt, ...) printf("[%s,%d] " fmt, __func__, __LINE__, ##__VA_ARGS__)
 
 #define validate_string_and_length(str, len, min_len, max_len) ({ \
     STATUS_T status = STATUS_OK;                                  \
     if (!str)                                                     \
     {                                                             \
-        mprintf("%s is null\n", #str);                            \
+        printf("%s is null\n", #str);                            \
         status = STATUS_NOK;                                      \
     }                                                             \
     if (len < min_len)                                            \
     {                                                             \
-        mprintf("%s is less than %d\n", #len, min_len);           \
+        printf("%s is less than %d\n", #len, min_len);           \
         status = STATUS_NOK;                                      \
     }                                                             \
     if (len > max_len)                                            \
     {                                                             \
-        mprintf("%s is greater than %d\n", #len, max_len);        \
+        printf("%s is greater than %d\n", #len, max_len);        \
         status = STATUS_NOK;                                      \
     }                                                             \
     status;                                                       \
@@ -106,7 +106,6 @@ static int get_hash_data_size(DB_HASH_METHOD method)
     }
     switch (method)
     {
-    case DB_HASH_MDTHOD_FIRST_VALID:
     case DB_HASH_METHOD_SHA256:
         size = 32; // bytes
     default:
@@ -178,7 +177,8 @@ static delete_db_struct(db_struct_t *db_struct)
 
 static db_struct_t *find_db_struct(base_db_t id)
 {
-    db_struct_t *ret = NULL db_struct_t *iterator = NULL;
+    db_struct_t *ret = NULL;
+    db_struct_t *iterator = NULL;
     if (db_collection == NULL)
     {
         mprintf("no db exist\n");
@@ -212,7 +212,7 @@ static STATUS_T prepare_shm(db_struct_t *db_struct)
         return STATUS_NOK;
     }
 
-    shm_fd = shmget(db_struct->db, IPC_CREAT | 0666);
+    shm_fd = shmget(db_struct->db, db_struct->shm_size, IPC_CREAT | 0666);
     if (shm_fd < 0)
     {
         mprintf("get shm failed\n");
@@ -270,9 +270,9 @@ STATUS_T db_get(int shm_key, base_db_t *base_db, int shm_size, DB_HASH_METHOD me
 
     if (shm_size <= 0)
     {
-        db_struct->shm_size = DEFALUT_SHM_SIZE;
+        db_struct->shm_size = MY_DEFALUT_SHM_SIZE;
     }
-    db_struct->DEFALUT_SHM_SIZE = shm_size;
+    db_struct->shm_size = shm_size;
 
     if (method < DB_HASH_MDTHOD_FIRST_VALID || method >= DB_HASH_METHOD_INVALID)
     {
@@ -361,7 +361,7 @@ STATUS_T db_get_old_file_base_content(base_db_t db, unsigned char **data, int *d
         if (fstat(file_fd, &stat) < 0)
         {
             mprintf("stat file failed\n");
-            return STTUS_OK;
+            return STATUS_OK;
         }
 
         if (stat.st_size == 0)
@@ -438,7 +438,7 @@ void *db_retrieve_access(base_db_t base_db)
         return NULL;
     }
 
-    return db->content;
+    return db->db_content;
 }
 
 STATUS_T db_put(base_db_t base_db)

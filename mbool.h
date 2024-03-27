@@ -1,4 +1,4 @@
-#ifnedf _MBOOL_H
+#ifndef _MBOOL_H
 #define _MBOOL_H
 
 

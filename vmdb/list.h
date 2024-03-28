@@ -28,6 +28,8 @@
 #ifndef _XORG_LIST_H_
 #define _XORG_LIST_H_
 
+#include "mbool.h"
+
 /**
  * @file Classic doubly-link circular list implementation.
  * For real usage examples of the linked list, see the file test/list.c

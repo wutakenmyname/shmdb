@@ -23,7 +23,7 @@ customization_t *global_data = NULL;
 unsigned char *generated_data = NULL;
 int generated_data_length = -1;
 
-#define GET_OFFSET(mstruct, member) ((mstruct *)0)->member
+#define GET_OFFSET(mstruct, member) ((size_t) &(((mstruct *)0)->member))
 #define GET_SIZE(mstruct, member) sizeof(((mstruct *)0)->member)
 #define GET_DATA_INFO(customization_t, member) {GET_OFFSET(customization_t, member), GET_SIZE(customization_t, member)}
 
@@ -36,14 +36,14 @@ data_info_t vmdb_info[] =
     GET_DATA_INFO(customization_t, i64_member),
     GET_DATA_INFO(customization_t, f32_member),
     GET_DATA_INFO(customization_t, d64_member),
-}
+};
 
 uint16 get_data_size(data_type_t type)
 {
     return vmdb_info[type].size;
 }
 
-unsigned char *get_data_offset(data_type_t type)
+unsigned char get_data_offset(data_type_t type)
 {
     return vmdb_info[type].offset;
 }
@@ -142,26 +142,6 @@ STATUS_T vmdb_get_data(data_type_t type, uint8 *value, int value_length)
     return STATUS_OK;
 }
 
-STATUS_T vmdb_get_data(data_type_t type, uint8 *value, int value_length)
-{
-    if (value == NULL)
-    {
-        mprintf("value is null\n");
-        return STATUS_NOK;
-    }
-
-    if (type < DB_FIRST_MEMBER || type >= DB_TOO_BIG_MEMBER || get_data_size(type) != value_length)
-    {
-        mprintf("type %d not valid or length %d is wrong \n", type, value_length);
-        return STATUS_NOK;
-    }
-
-    vmdb_lock();
-    memcpy(value, global_data + get_data_offset(type), value_length);
-    vmdb_unlock();
-    return STATUS_OK;
-}
-
 STATUS_T vmdb_set_data(data_type_t type, uint8 *value, int value_length)
 {
     if (value == NULL)
@@ -236,7 +216,7 @@ STATUS_T vmdb_get_data_ptr(data_type_t type, uint8 **value, int value_length)
         return STATUS_NOK;
     }
 
-    return global_data + get_data_offset(type);
+    *value = global_data + get_data_offset(type);
     return STATUS_OK;
 }
 

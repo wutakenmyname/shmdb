@@ -5,6 +5,7 @@
 
 typedef enum
 {
+    DB_FIRST_MEMBER = 0,
     DB_UINT8_MEMBER = 0,
     DB_UINT16_MEMBER,
     DB_UINT32_MEMBER,

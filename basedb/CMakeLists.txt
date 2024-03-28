@@ -44,10 +44,10 @@ endif()
 
 message(STATUS "CMAKE_BINARY_DIR is ${CMAKE_BINARY_DIR}")
 if(DEFINED INSTALL_DIR)
-    message(STATUS "CMAKE_INSTALL_PREFIX is set to default: ${CMAKE_INSTALL_PREFIX}")
+    message(STATUS "CMAKE_INSTALL_PREFIX is set to : ${INSTALL_DIR}")
     set(MY_INSTALL_DIR ${INSTALL_DIR})
 else()
-    message(STATUS "CMAKE_INSTALL_PREFIX is set to: ${CMAKE_INSTALL_PREFIX}")
+    message(STATUS "CMAKE_INSTALL_PREFIX is set to: ${CMAKE_BINARY_DIR}")
     set(MY_INSTALL_DIR ${CMAKE_BINARY_DIR})
 endif()
 

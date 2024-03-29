@@ -93,6 +93,13 @@ STATUS_T vmdb_init_once()
     vmdb_key = generate_vmdb_shm_key();
     sem_key = generate_vmdb_sem_key();
     vm_lock_init();
+    printf("vmdb_key :%d\n", vmdb_key);
+
+    if (vmdb_key < 0)
+    {
+        mprintf("generate_vmdb_shm_key failed\n");
+        return STATUS_NOK;
+    }
     ret = db_get(vmdb_key, &base_db, sizeof(customization_t), DB_HASH_METHOD_SHA256);
     if (ret == STATUS_NOK)
     {

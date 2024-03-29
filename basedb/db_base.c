@@ -136,12 +136,39 @@ static db_struct_t *new_db_struct()
     INIT_LIST_HEAD(&(db_struct->linker));
     if (db_collection == NULL)
     {
+        mprintf("new db_struct %p, linker: %p\n", db_struct, &(db_struct->linker));
         db_collection = &(db_struct->linker);
     }
     else
     {
+        mprintf("new db_struct %p, linker: %p\n", db_struct, &(db_struct->linker));
         list_add(&(db_struct->linker), db_collection);
+        db_struct_t *iterator = NULL;
+        list_for_each_entry(iterator, db_collection, linker)
+        {
+            mprintf("goes here\n");
+            if (iterator != NULL)
+            {
+                mprintf("iterator->db :%d\n", iterator->db);
+            }
+            else
+                break;
+        }
     }
+
+    db_struct_t *iterator = NULL;
+    list_for_each_entry(iterator, db_collection, linker)
+    {
+        mprintf("goes here\n");
+        if (iterator != NULL)
+        {
+            mprintf("iterator->db :%d\n", iterator->db);
+        }
+        else
+            break;
+    }
+
+    return db_struct;
 }
 
 static delete_db_struct(db_struct_t *db_struct)
@@ -186,8 +213,10 @@ static db_struct_t *find_db_struct(base_db_t id)
     }
     else
     {
+        mprintf("db_collection addr: %p\n", db_collection);
         list_for_each_entry(iterator, db_collection, linker)
         {
+            mprintf("iterator addr: %p\n", iterator);
             if (iterator->db == id)
             {
                 ret = iterator;
@@ -266,6 +295,8 @@ STATUS_T db_get(int shm_key, base_db_t *base_db, int shm_size, DB_HASH_METHOD me
         return STATUS_NOK;
     }
 
+    mprintf("shm_key :%d\n", shm_key);
+    mprintf("db_struct addr :%p\n", db_struct);
     db_struct->db = shm_key;
 
     if (shm_size <= 0)

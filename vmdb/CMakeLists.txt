@@ -9,7 +9,7 @@ set(INCLUDE_FILES vmdb.h list.h mbool.h status.h db_base.h customization_vm.h)
 set(SOURCE_FILES vmdb.c)
 set(EXPORT_HEAD_FILES status.h mbool.h db_base.h vmdb.h customization_vm.h byte_types.h)
 set(LIB_NAME vmdb)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2 -fpic")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2 -fpic -Werror=return-type")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpic")
 
 # 设置交叉编译器

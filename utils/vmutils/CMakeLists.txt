@@ -8,7 +8,7 @@ set(CMAKE_CXX_COMPILER g++)
 set(INCLUDE_FILES customization.h)
 set(EXPORT_HEAD_FILES "")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2 -fpic")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2 -fpic -Werror=return-type")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpic")
 
 # 设置交叉编译器

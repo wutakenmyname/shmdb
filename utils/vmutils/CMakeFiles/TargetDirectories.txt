@@ -1,0 +1,8 @@
+/workspaces/shmdb/utils/vmutils/CMakeFiles/install/strip.dir
+/workspaces/shmdb/utils/vmutils/CMakeFiles/install/local.dir
+/workspaces/shmdb/utils/vmutils/CMakeFiles/install.dir
+/workspaces/shmdb/utils/vmutils/CMakeFiles/list_install_components.dir
+/workspaces/shmdb/utils/vmutils/CMakeFiles/rebuild_cache.dir
+/workspaces/shmdb/utils/vmutils/CMakeFiles/edit_cache.dir
+/workspaces/shmdb/utils/vmutils/CMakeFiles/vmset.dir
+/workspaces/shmdb/utils/vmutils/CMakeFiles/vmget.dir

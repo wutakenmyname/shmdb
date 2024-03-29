@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.2)
-PROJECT(vmdb)
+PROJECT(vmutils)
 
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_CXX_COMPILER g++)
-set(INCLUDE_FILES vmdb.h list.h mbool.h status.h db_base.h customization.h)
-set(SOURCE_FILES vmdb.c)
-set(EXPORT_HEAD_FILES status.h mbool.h db_base.h vmdb.h)
-set(LIB_NAME vmdb)
+set(INCLUDE_FILES customization.h)
+set(EXPORT_HEAD_FILES "")
+add_executable(vmget vmget.c)
+add_executable(vmset vmset.c)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2 -fpic")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpic")
 
@@ -47,13 +47,26 @@ if(DEFINED INSTALL_DIR)
     message(STATUS "CMAKE_INSTALL_PREFIX is set to : ${INSTALL_DIR}")
     set(MY_INSTALL_DIR ${INSTALL_DIR})
 else()
-    message(FATAL_ERROR "INSTALL_DIR is not defined")
+    message(STATUS "CMAKE_INSTALL_PREFIX is set to: ${CMAKE_BINARY_DIR}")
+    set(MY_INSTALL_DIR ${CMAKE_BINARY_DIR})
 endif()
 
-add_library(${LIB_NAME} SHARED ${SOURCE_FILES})
+if(DEFINED EXTERN_INCLUDE_DIR)
+    message(STATUS "EXTERN_INCLUDE_DIR is set to ${EXTERN_INCLUDE_DIR}")
+    include_directories(${EXTERN_INCLUDE_DIR})
+endif()
 
-install(TARGETS ${LIB_NAME}
-        LIBRARY DESTINATION ${MY_INSTALL_DIR}/output/lib/
+if(DEFINED EXTERN_LIB_DIR)
+    message(STATUS "EXTERN_LIB_DIR is set to ${EXTERN_LIB_DIR}")
+    link_directories(${EXTERN_LIB_DIR})
+else()
+    message(FATAL_ERROR "EXTERN_LIB_DIR is not defined!")
+endif()
+
+target_link_libraries(vmget vmdb)
+
+install(TARGETS vmget vmset
+        RUNTIME DESTINATION ${MY_INSTALL_DIR}/output/bin/
         )
 install(FILES ${EXPORT_HEAD_FILES}
         DESTINATION ${MY_INSTALL_DIR}/output/include/)

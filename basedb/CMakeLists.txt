@@ -53,6 +53,7 @@ else()
 endif()
 
 add_library(${LIB_NAME} SHARED ${SOURCE_FILES})
+target_link_libraries(${LIB_NAME} ssl crypto)
 
 install(TARGETS ${LIB_NAME}
         LIBRARY DESTINATION ${MY_INSTALL_DIR}/output/lib/

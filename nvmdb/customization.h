@@ -23,14 +23,14 @@ typedef struct
     int gender;
     float height;
     float weight;
-}person_info __attribute__((aligned));
+}person_info_t __attribute__((aligned));
 
 typedef struct
 {
     uint8 i8_member;
     uint16 i16_member;
     uint32 i32_member;
-    person_info struct_member;
+    person_info_t struct_member;
     uint64 i64_member;
     float f32_member;
     double d64_member;

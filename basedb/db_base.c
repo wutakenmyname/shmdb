@@ -491,7 +491,7 @@ STATUS_T db_commit_to_file_base(base_db_t base_db, int *data, int data_length)
     header.hash_offset = data_length + header.data_offset;
     header.hash_length = hash_data_size;
     header.hash_method = db_struct->method;
-    // remvoe(db_struct->file_base_path);
+    // remove(db_struct->file_base_path);
 
     FILE *file = fopen(db_struct->file_base_path, "wb");
     if (file == NULL)
@@ -508,7 +508,7 @@ STATUS_T db_commit_to_file_base(base_db_t base_db, int *data, int data_length)
         mprintf("Failed to write data to file");
         fclose(file);
         free(hash_value);
-        remvoe(db_struct->file_base_path);
+        remove(db_struct->file_base_path);
         return STATUS_NOK;
     }
 
@@ -518,7 +518,7 @@ STATUS_T db_commit_to_file_base(base_db_t base_db, int *data, int data_length)
         mprintf("Failed to write data to file");
         fclose(file);
         free(hash_value);
-        remvoe(db_struct->file_base_path);
+        remove(db_struct->file_base_path);
         return STATUS_NOK;
     }
 
@@ -528,7 +528,7 @@ STATUS_T db_commit_to_file_base(base_db_t base_db, int *data, int data_length)
         mprintf("Failed to write data to file");
         fclose(file);
         free(hash_value);
-        remvoe(db_struct->file_base_path);
+        remove(db_struct->file_base_path);
         return STATUS_NOK;
     }
 

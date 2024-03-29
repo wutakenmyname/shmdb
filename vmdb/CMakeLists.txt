@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 PROJECT(vmdb)
+include(config.cmake)
 
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_C_COMPILER gcc)

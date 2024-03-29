@@ -5,9 +5,9 @@ include(config.cmake)
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_CXX_COMPILER g++)
-set(INCLUDE_FILES vmdb.h list.h mbool.h status.h db_base.h customization.h)
+set(INCLUDE_FILES vmdb.h list.h mbool.h status.h db_base.h customization_vm.h)
 set(SOURCE_FILES vmdb.c)
-set(EXPORT_HEAD_FILES status.h mbool.h db_base.h vmdb.h)
+set(EXPORT_HEAD_FILES status.h mbool.h db_base.h vmdb.h customization_vm.h)
 set(LIB_NAME vmdb)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2 -fpic")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpic")
@@ -51,7 +51,15 @@ else()
     message(FATAL_ERROR "INSTALL_DIR is not defined")
 endif()
 
+if(DEFINED EXTERN_LIB_DIR)
+    message(STATUS "EXTERN_LIB_DIR is set to ${EXTERN_LIB_DIR}")
+    link_directories(${EXTERN_LIB_DIR})
+else()
+    message(FATAL_ERROR "EXTERN_LIB_DIR is not defined!")
+endif()
+
 add_library(${LIB_NAME} SHARED ${SOURCE_FILES})
+target_link_libraries(${LIB_NAME} basedb)
 
 install(TARGETS ${LIB_NAME}
         LIBRARY DESTINATION ${MY_INSTALL_DIR}/output/lib/

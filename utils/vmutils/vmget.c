@@ -1,11 +1,11 @@
 #include "vmdb.h"
-include "customization.h"
+#include "customization_vm.h"
 #include <stdio.h>
 #include <unistd.h>
 
 static void print_help()
 {
-    printf("###############\n");
+    printf("################\n");
     printf("-h  print help\n");
     printf("-t  type\n");
     printf("-l  specify length (1: byte, 2:2bytes, 3:3bytes...n:nbytes)\n");
@@ -29,7 +29,7 @@ int main(char *argv[], int argc)
 
     int opt;
 
-    while ((opt = getopt(argc, argv, "t:l:")) != -1) {
+    while ((opt = getopt(argc, argv, "t:l:f:h:")) != -1) {
         switch (opt) {
             case 't':
                 type = atoi(optarg);
@@ -43,6 +43,9 @@ int main(char *argv[], int argc)
                 format = atoi(optarg);
                 printf("Option -f detected. Value: %d\n", format);
                 break;
+            case 'h':
+                print_help();
+                return 1;
             default:
                 fprintf(stderr, "Usage: %s -t value -l value\n", argv[0]);
                 return 1;
@@ -64,7 +67,7 @@ int main(char *argv[], int argc)
     }
 
     memset(value, 0, length + 1);
-    if (vmdb_get_data(data_type_t type, uint8 *value, int value_length) == STATUS_OK)
+    if (vmdb_get_data(type, value, length) == STATUS_OK)
     {
         switch (format)
         {

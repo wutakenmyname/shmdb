@@ -3,7 +3,7 @@
 #include "list.h"
 #include "mbool.h"
 #include "status.h"
-#include "customization.h"
+#include "customization_vm.h"
 #include "byte_types.h"
 
 

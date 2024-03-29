@@ -12,7 +12,7 @@ static void print_help()
     printf("-f  specify format (1: char, 2:uint8, 3:uint16, 4:uint32, 5:uint64, 6:float, 7:double, 8:string)\n");
 }
 
-int main(char *argv[], int argc)
+int main(int argc, char *argv[])
 {
     STATUS_T ret = STATUS_NOK;
     data_type_t type = DB_FIRST_MEMBER;
@@ -21,8 +21,9 @@ int main(char *argv[], int argc)
     int format = -1;
     
 
-    if (argc != 4)
+    if (argc != 7)
     {
+	printf("argc:%d is not right\n", argc);
         print_help();
         return -1;
     }

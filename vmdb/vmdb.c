@@ -150,7 +150,7 @@ STATUS_T vmdb_get_data(data_type_t type, uint8 *value, int value_length)
     }
     mprintf("type: %d, length: %d, offset:%d\n", type, value_length, get_data_offset(type));
     vmdb_lock();
-    memcpy(value, global_data + get_data_offset(type), value_length);
+    memcpy(value, (unsigned char *)global_data + get_data_offset(type), value_length);
     vmdb_unlock();
     return STATUS_OK;
 }

@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
             }
             case 8:
             {
-                printf("value: %s\n", (char *) *value);
+                printf("value: %s\n", (char *)value);
                 break;
             }
         }

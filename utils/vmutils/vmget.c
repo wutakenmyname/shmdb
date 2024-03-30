@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
     memset(value, 0, length + 1);
     if (vmdb_get_data(type, value, length) == STATUS_OK)
     {
+	printf("[%s,%d]goes here\n", __func__, __LINE__);
         switch (format)
         {
             case 1:
@@ -114,4 +115,6 @@ int main(int argc, char *argv[])
             }
         }
     }
+    free(value);
+    return 0;
 }

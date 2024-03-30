@@ -214,7 +214,7 @@ static db_struct_t *find_db_struct(base_db_t id)
 {
     db_struct_t *ret = NULL;
     db_struct_t *iterator = NULL;
-
+    mprintf("db wanted id %d\n", id);
     mprintf("db_collection addr: %p\n", db_collection);
     list_for_each_entry(iterator, &db_collection, linker)
     {

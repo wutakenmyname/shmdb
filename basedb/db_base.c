@@ -79,7 +79,17 @@ typedef struct
     int hash_length;
 } file_base_header;
 
-static struct list_head *db_collection = NULL;
+static bool initialized = false;
+static struct list_head db_collection;
+
+static void init()
+{
+    if (initialized == false)
+    {
+        initialized = true;
+        INIT_LIST_HEAD(&db_collection);
+    }
+}
 
 static STATUS_T compute_sha256(char *data, int data_length, unsigned char *sha256_value)
 {
@@ -134,30 +144,10 @@ static db_struct_t *new_db_struct()
     db_struct->db = -1;
 
     INIT_LIST_HEAD(&(db_struct->linker));
-    if (db_collection == NULL)
-    {
-        mprintf("new db_struct %p, linker: %p\n", db_struct, &(db_struct->linker));
-        db_collection = &(db_struct->linker);
-    }
-    else
-    {
-        mprintf("new db_struct %p, linker: %p\n", db_struct, &(db_struct->linker));
-        list_add(&(db_struct->linker), db_collection);
-        db_struct_t *iterator = NULL;
-        list_for_each_entry(iterator, db_collection, linker)
-        {
-            mprintf("goes here\n");
-            if (iterator != NULL)
-            {
-                mprintf("iterator->db :%d\n", iterator->db);
-            }
-            else
-                break;
-        }
-    }
-
+    mprintf("new db_struct %p, linker: %p\n", db_struct, &(db_struct->linker));
+    list_add(&(db_struct->linker), &db_collection);
     db_struct_t *iterator = NULL;
-    list_for_each_entry(iterator, db_collection, linker)
+    list_for_each_entry(iterator, &db_collection, linker)
     {
         mprintf("goes here\n");
         if (iterator != NULL)
@@ -181,6 +171,7 @@ static delete_db_struct(db_struct_t *db_struct)
 
     struct list_head *temp = NULL;
     temp = &(db_struct->linker);
+    #if 0
     if (db_collection == temp)
     {
         if (temp->next == temp->prev && temp->next == temp)
@@ -198,6 +189,8 @@ static delete_db_struct(db_struct_t *db_struct)
     {
         list_del(temp);
     }
+    #endif
+    list_del(temp);
 
     free(db_struct);
 }
@@ -206,22 +199,15 @@ static db_struct_t *find_db_struct(base_db_t id)
 {
     db_struct_t *ret = NULL;
     db_struct_t *iterator = NULL;
-    if (db_collection == NULL)
+
+    mprintf("db_collection addr: %p\n", db_collection);
+    list_for_each_entry(iterator, &db_collection, linker)
     {
-        mprintf("no db exist\n");
-        ret = NULL;
-    }
-    else
-    {
-        mprintf("db_collection addr: %p\n", db_collection);
-        list_for_each_entry(iterator, db_collection, linker)
+        mprintf("iterator addr: %p\n", iterator);
+        if (iterator->db == id)
         {
-            mprintf("iterator addr: %p\n", iterator);
-            if (iterator->db == id)
-            {
-                ret = iterator;
-                break;
-            }
+            ret = iterator;
+            break;
         }
     }
 
@@ -273,6 +259,7 @@ static STATUS_T prepare_shm(db_struct_t *db_struct)
 
 STATUS_T db_get(int shm_key, base_db_t *base_db, int shm_size, DB_HASH_METHOD method)
 {
+    init();
     if (base_db == NULL)
     {
         mprintf("base_db is null\n");
@@ -451,11 +438,11 @@ void db_release_old_file_base_content(unsigned char *data)
     if (data == NULL)
     {
         mprintf("data is null\n");
-        return STATUS_NOK;
+        return;
     }
 
     free(data);
-    return STATUS_OK;
+    return ;
 }
 
 void *db_retrieve_access(base_db_t base_db)

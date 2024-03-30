@@ -476,6 +476,21 @@ void *db_retrieve_access(base_db_t base_db)
 
 STATUS_T db_put(base_db_t base_db)
 {
+    db_struct_t *db_struct = NULL;
+    db_struct = find_db_struct(base_db);
+    if (db_struct == NULL)
+    {
+        mprintf("cannot find a db with id %d\n", base_db);
+        return STATUS_NOK;
+    }
+
+    if (shmdt(db_struct->db_content) < 0)
+    {
+        mprintf("shmdt failed for db with id %d\n", base_db);
+        return STATUS_NOK;
+    }
+
+    db_struct->db_content = NULL;
     return STATUS_OK;
 }
 

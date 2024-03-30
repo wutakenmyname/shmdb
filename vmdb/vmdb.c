@@ -36,6 +36,7 @@ data_info_t vmdb_info[] =
     GET_DATA_INFO(customization_t, i64_member),
     GET_DATA_INFO(customization_t, f32_member),
     GET_DATA_INFO(customization_t, d64_member),
+    GET_DATA_INFO(customization_t, string66),
 };
 
 uint16 get_data_size(data_type_t type)
@@ -120,11 +121,14 @@ STATUS_T vmdb_init_once()
     global_data->i32_member = 12343;
     global_data->i64_member = 1234563;
     global_data->struct_member.age = 26;
-    memcpy(global_data->struct_member.name, "mok", strlen("mok"));
+    memset(global_data->struct_member.name, 0, sizeof(global_data->struct_member.name));
+    memcpy(global_data->struct_member.name, "mok", strlen("mok") + 1);
     global_data->struct_member.height = 11;
     global_data->struct_member.weight = 22;
     global_data->f32_member = 1.8537;
     global_data->d64_member = 7.77777;
+    memset(global_data->string66, 0, sizeof(global_data->string66));
+    memcpy(global_data->string66, "this is mok", strlen("this is mok"));
 
     return STATUS_OK;
 }

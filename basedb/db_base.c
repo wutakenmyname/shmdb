@@ -313,7 +313,7 @@ STATUS_T db_get(int shm_key, base_db_t *base_db, int shm_size, DB_HASH_METHOD me
     }
     db_struct->method = method;
 
-    base_db = db_struct->db;
+    *base_db = db_struct->db;
 
     if (prepare_shm(db_struct) == STATUS_NOK)
     {

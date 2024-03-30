@@ -41,6 +41,7 @@ data_info_t vmdb_info[] =
 
 uint16 get_data_size(data_type_t type)
 {
+    mprintf("type: %d, size: %d\n", type, vmdb_info[type].size);
     return vmdb_info[type].size;
 }
 
@@ -95,6 +96,7 @@ STATUS_T vmdb_init_once()
     sem_key = generate_vmdb_sem_key();
     vm_lock_init();
     printf("vmdb_key :%d\n", vmdb_key);
+    mprintf("sizeof(customization_t): %d\n", sizeof(customization_t));
 
     if (vmdb_key < 0)
     {

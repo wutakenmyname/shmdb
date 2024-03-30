@@ -125,6 +125,21 @@ static int get_hash_data_size(DB_HASH_METHOD method)
     return size;
 }
 
+void iterate_all_db()
+{
+    db_struct_t *iterator = NULL;
+    list_for_each_entry(iterator, &db_collection, linker)
+    {
+        mprintf("goes here\n");
+        if (iterator != NULL)
+        {
+            mprintf("iterator->db :%d\n", iterator->db);
+        }
+        else
+            break;
+    }
+}
+
 static db_struct_t *new_db_struct()
 {
     db_struct_t *db_struct = NULL;
@@ -305,7 +320,7 @@ STATUS_T db_get(int shm_key, base_db_t *base_db, int shm_size, DB_HASH_METHOD me
         mprintf("prepare_shm failed\n");
         return STATUS_NOK;
     }
-
+    iterate_all_db();
     return STATUS_OK;
 }
 

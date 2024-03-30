@@ -170,7 +170,7 @@ STATUS_T vmdb_set_data(data_type_t type, uint8 *value, int value_length)
     }
 
     vmdb_lock();
-    memcpy(global_data + get_data_offset(type), value, value_length);
+    memcpy((unsigned char *)global_data + get_data_offset(type), value, value_length);
     vmdb_unlock();
     return STATUS_OK;
 }
@@ -190,7 +190,7 @@ STATUS_T vmdb_get_data_at_offset(data_type_t type, uint8 *value, int value_lengt
     }
 
     vmdb_lock();
-    memcpy(value, global_data + get_data_offset(type) + offset, value_length);
+    memcpy(value, (unsigned char *)global_data + get_data_offset(type) + offset, value_length);
     vmdb_unlock();
     return STATUS_OK;
 }
@@ -210,7 +210,7 @@ STATUS_T vmdb_set_data_at_offset(data_type_t type, uint8  *value, int value_leng
     }
 
     vmdb_lock();
-    memcpy(global_data + get_data_offset(type) + offset, value, value_length);
+    memcpy((unsigned char *)global_data + get_data_offset(type) + offset, value, value_length);
     vmdb_unlock();
     return STATUS_OK;
 }
@@ -229,7 +229,7 @@ STATUS_T vmdb_get_data_ptr(data_type_t type, uint8 **value, int value_length)
         return STATUS_NOK;
     }
 
-    *value = global_data + get_data_offset(type);
+    *value = (unsigned char *)global_data + get_data_offset(type);
     return STATUS_OK;
 }
 

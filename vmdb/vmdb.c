@@ -127,7 +127,7 @@ STATUS_T vmdb_init_once()
     memcpy(global_data->struct_member.name, "mok", strlen("mok") + 1);
     global_data->struct_member.height = 11;
     global_data->struct_member.weight = 22;
-    global_data->f32_member = 1.8537;
+    global_data->f32_member = 1.8537f;
     global_data->d64_member = 7.77777;
     memset(global_data->string66, 0, sizeof(global_data->string66));
     memcpy(global_data->string66, "this is mok", strlen("this is mok"));
@@ -147,6 +147,18 @@ STATUS_T vmdb_get_data(data_type_t type, uint8 *value, int value_length)
     {
         mprintf("type %d not valid or length %d is wrong \n", type, value_length);
         return STATUS_NOK;
+    }
+
+    mprintf("uint32 member :%u\n", global_data->i32_member);
+    mprintf("float member: %f\n", global_data->f32_member);
+    {
+        mprintf("print hex value for each byte from low address to high address: ");
+        int i = 0;
+        for(;i < value_length; i++)
+        {
+            printf(" %hhx ", *((unsigned char *)global_data + get_data_offset(type) + i));
+        }
+        printf("\n");
     }
     mprintf("type: %d, length: %d, offset:%d\n", type, value_length, get_data_offset(type));
     vmdb_lock();

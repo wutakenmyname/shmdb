@@ -9,7 +9,7 @@ static void print_help()
     printf("-h  print help\n");
     printf("-t  type\n");
     printf("-l  specify length (1: byte, 2:2bytes, 3:3bytes...n:nbytes)\n");
-    printf("-f  specify format (1: char, 2:uint8, 3:uint16, 4:uint32, 5:uint64, 6:float, 7:double, 8:string)\n");
+    printf("-f  specify format (1: char, 2:int8, 3:int16, 4:int32, 5:int64, 6:float, 7:double, 8:string)\n");
 }
 
 int main(int argc, char *argv[])
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     if (argc != 7)
     {
-	printf("argc:%d is not right\n", argc);
+	    printf("argc:%d is not right\n", argc);
         print_help();
         return -1;
     }
@@ -70,16 +70,6 @@ int main(int argc, char *argv[])
     memset(value, 0, length + 1);
     if (vmdb_get_data(type, value, length) == STATUS_OK)
     {
-        {
-            printf("print hex value for each byte from low address to high address: ");
-            int i = 0;
-            for(;i < length; i++)
-            {
-                printf(" %hhx ", *(value + i));
-            }
-            printf("\n");
-        }
-	printf("[%s,%d]goes here\n", __func__, __LINE__);
         switch (format)
         {
             case 1:
@@ -89,22 +79,22 @@ int main(int argc, char *argv[])
             }
             case 2:
             {
-                printf("value: %hhu\n", *((uint8 *)value));
+                printf("value: %hhd\n", *((int8 *)value));
                 break;
             }
             case 3:
             {
-                printf("value: %hu\n", *((uint16 *)value));
+                printf("value: %hd\n", *((int16 *)value));
                 break;
             }
             case 4:
             {
-                printf("value: %u\n", *((uint32 *)value));
+                printf("value: %d\n", *((int32 *)value));
                 break;
             }
             case 5:
             {
-                printf("value: %llu\n", *((uint64 *)value));
+                printf("value: %lld\n", *((int64 *)value));
                 break;
             }
             case 6:

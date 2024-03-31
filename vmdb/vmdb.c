@@ -119,9 +119,9 @@ STATUS_T vmdb_init_once()
     }
 
     global_data->i8_member = 99;
-    global_data->i16_member = 66;
+    global_data->i16_member = -66;
     global_data->i32_member = 12343;
-    global_data->i64_member = 1234563;
+    global_data->i64_member = -1234563;
     global_data->struct_member.age = 26;
     memset(global_data->struct_member.name, 0, sizeof(global_data->struct_member.name));
     memcpy(global_data->struct_member.name, "mok", strlen("mok") + 1);
@@ -149,35 +149,6 @@ STATUS_T vmdb_get_data(data_type_t type, uint8 *value, int value_length)
         return STATUS_NOK;
     }
 
-    mprintf("uint32 member :%u, addr: %p\n", global_data->i32_member, &(global_data->i32_member));
-    {
-        mprintf("print hex value for each byte from low address to high address for uint32 member: ");
-        int i = 0;
-        for(;i < 4; i++)
-        {
-            printf(" %hhx ", *((unsigned char *)&(global_data->i32_member) + i));
-        }
-        printf("\n");
-    }
-    mprintf("float member: %f, addr :%p\n", global_data->f32_member, &(global_data->f32_member));
-    {
-        mprintf("print hex value for each byte from low address to high address for float member: ");
-        int i = 0;
-        for(;i < 4; i++)
-        {
-            printf(" %hhx ", *((unsigned char *)&(global_data->f32_member) + i));
-        }
-        printf("\n");
-    }
-    {
-        mprintf("print hex value for each byte from low address to high address: ");
-        int i = 0;
-        for(;i < value_length; i++)
-        {
-            printf(" %hhx ", *((unsigned char *)global_data + get_data_offset(type) + i));
-        }
-        printf("\n");
-    }
     mprintf("type: %d, length: %d, offset:%d, addr: %p\n", type, value_length, get_data_offset(type), (unsigned char *)global_data + get_data_offset(type));
     vmdb_lock();
     memcpy(value, (unsigned char *)global_data + get_data_offset(type), value_length);

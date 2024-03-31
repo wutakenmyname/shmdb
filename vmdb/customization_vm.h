@@ -28,11 +28,11 @@ typedef struct
 
 typedef struct
 {
-    uint8 i8_member;
-    uint16 i16_member;
-    uint32 i32_member;
+    int8 i8_member;
+    int8 i16_member;
+    int32 i32_member;
     person_info struct_member;
-    uint64 i64_member;
+    int64 i64_member;
     float f32_member;
     double d64_member;
     char string66[66];

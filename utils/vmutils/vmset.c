@@ -83,13 +83,13 @@ int main(int argc, char *argv[])
                     case 4:
                     {
                         *((int32 *)(value)) = atoi(optarg);
-                        //printf("value: %d\n", *((int32 *)value));
+                        printf("value: %d\n", *((int32 *)value));
                         break;
                     }
                     case 5:
                     {
                         *((int64 *)(value)) = atoi(optarg);
-                        //printf("value: %lld\n", *((int64 *)value));
+                        printf("value: %lld\n", *((int64 *)value));
                         break;
                     }
                     case 6:
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
                     }
                     case 7:
                     {
-                        *((float *)(value)) = strtod(optarg, NULL);
+                        *((double *)(value)) = strtod(optarg, NULL);
                         printf("double optarg: %s\n", optarg);
                         printf("value: %lf\n", *((double *)value));
                         break;

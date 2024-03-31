@@ -94,19 +94,19 @@ int main(int argc, char *argv[])
                     case 6:
                     {
                         *((float *)(value)) = atof(optarg);
-                        //printf("value: %f\n", *((float *)value));
+                        printf("value: %f\n", *((float *)value));
                         break;
                     }
                     case 7:
                     {
                         *((float *)(value)) = strtod(optarg);
-                        //printf("value: %lf\n", *((double *)value));
+                        printf("value: %lf\n", *((double *)value));
                         break;
                     }
                     case 8:
                     {
                         memcpy(value, optarg, length);
-                        //printf("value: %s\n", (char *)value);
+                        printf("value: %s\n", (char *)value);
                         break;
                     }
                 }

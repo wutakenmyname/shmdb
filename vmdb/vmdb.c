@@ -150,7 +150,25 @@ STATUS_T vmdb_get_data(data_type_t type, uint8 *value, int value_length)
     }
 
     mprintf("uint32 member :%u, addr: %p\n", global_data->i32_member, &(global_data->i32_member));
+    {
+        mprintf("print hex value for each byte from low address to high address for uint32 member: ");
+        int i = 0;
+        for(;i < 4; i++)
+        {
+            printf(" %hhx ", *((unsigned char *)&(global_data->i32_member) + i));
+        }
+        printf("\n");
+    }
     mprintf("float member: %f, addr :%p\n", global_data->f32_member, &(global_data->f32_member));
+    {
+        mprintf("print hex value for each byte from low address to high address for float member: ");
+        int i = 0;
+        for(;i < 4; i++)
+        {
+            printf(" %hhx ", *((unsigned char *)&(global_data->f32_member) + i));
+        }
+        printf("\n");
+    }
     {
         mprintf("print hex value for each byte from low address to high address: ");
         int i = 0;

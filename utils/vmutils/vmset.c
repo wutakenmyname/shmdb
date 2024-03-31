@@ -95,14 +95,14 @@ int main(int argc, char *argv[])
                     case 6:
                     {
                         *((float *)(value)) = atof(optarg);
-                        printf("float optarg: %f\n", optarg);
+                        printf("float optarg: %s\n", optarg);
                         printf("value: %f\n", *((float *)value));
                         break;
                     }
                     case 7:
                     {
                         *((float *)(value)) = strtod(optarg);
-                        printf("double optarg: %f\n", optarg);
+                        printf("double optarg: %s\n", optarg);
                         printf("value: %lf\n", *((double *)value));
                         break;
                     }

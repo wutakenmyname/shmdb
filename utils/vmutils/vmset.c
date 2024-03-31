@@ -64,18 +64,19 @@ int main(int argc, char *argv[])
                     case 1:
                     {
                         *((char *)(value)) = *optarg;
+                        printf("value: %c\n", *((int8 *)value));
                         break;
                     }
                     case 2:
                     {
                         *((int8 *)(value)) = atoi(optarg);
-                        //printf("value: %hhd\n", *((int8 *)value));
+                        printf("value: %hhd\n", *((int8 *)value));
                         break;
                     }
                     case 3:
                     {
                         *((int16 *)(value)) = atoi(optarg);
-                        //printf("value: %hd\n", *((int16 *)value));
+                        printf("value: %hd\n", *((int16 *)value));
                         break;
                     }
                     case 4:
@@ -109,6 +110,7 @@ int main(int argc, char *argv[])
                         break;
                     }
                 }
+                break;
 
             case 'h':
                 print_help();

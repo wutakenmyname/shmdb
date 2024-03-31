@@ -219,10 +219,36 @@ STATUS_T vmdb_set_data(data_type_t type, uint8 *value, int value_length)
         mprintf("type %d not valid or length %d is wrong \n", type, value_length);
         return STATUS_NOK;
     }
-
+    {
+        int i = 0;
+        mprintf("value to set hex: ");
+        for (; i < value_length; i++)
+        {
+            printf("%x", *(value + i));
+        }
+        printf(" \n");
+    }
+    {
+        int i = 0;
+        mprintf("value set before hex: ");
+        for (; i < value_length; i++)
+        {
+            printf("%x", *((unsigned char *)global_data + get_data_offset(type) + i));
+        }
+        printf(" \n");
+    }
     vmdb_lock();
     memcpy((unsigned char *)global_data + get_data_offset(type), value, value_length);
     vmdb_unlock();
+    {
+        int i = 0;
+        mprintf("value set after hex: ");
+        for (; i < value_length; i++)
+        {
+            printf("%x", *((unsigned char *)global_data + get_data_offset(type) + i));
+        }
+        printf(" \n");
+    }
     return STATUS_OK;
 }
 

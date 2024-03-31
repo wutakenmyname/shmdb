@@ -6,11 +6,11 @@
 typedef enum
 {
     DB_FIRST_MEMBER = 0,
-    DB_UINT8_MEMBER = 0,
-    DB_UINT16_MEMBER = 1,
-    DB_UINT32_MEMBER = 2,
+    DB_INT8_MEMBER = 0,
+    DB_INT16_MEMBER = 1,
+    DB_INT32_MEMBER = 2,
     DB_STRUCT_MEMBER = 3,
-    DB_UINT64_MEMBER = 4,
+    DB_INT64_MEMBER = 4,
     DB_FLOAT_MEMBER = 5,
     DB_DOUBLE_MEMBER = 6,
     DB_STRING_MEMBER = 7,
@@ -29,7 +29,7 @@ typedef struct
 typedef struct
 {
     int8 i8_member;
-    int8 i16_member;
+    int16 i16_member;
     int32 i32_member;
     person_info struct_member;
     int64 i64_member;

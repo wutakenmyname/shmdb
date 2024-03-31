@@ -91,6 +91,7 @@ STATUS_T nvmdb_init_once()
         }  
     }
 
+    #if 0
     global_data->i8_member = 99;
     global_data->i16_member = 66;
     global_data->i32_member = 12343;
@@ -101,6 +102,7 @@ STATUS_T nvmdb_init_once()
     global_data->struct_member.weight = 22;
     global_data->f32_member = 1.8537;
     global_data->d64_member = 7.77777;
+    #endif
 
 }
 

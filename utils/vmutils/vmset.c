@@ -2,6 +2,7 @@
 #include "customization_vm.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 static void print_help()
 {

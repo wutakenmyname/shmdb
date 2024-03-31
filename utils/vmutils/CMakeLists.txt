@@ -66,6 +66,7 @@ endif()
 add_executable(vmget vmget.c)
 add_executable(vmset vmset.c)
 target_link_libraries(vmget vmdb)
+target_link_libraries(vmset vmdb)
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker --verbose")
 
 

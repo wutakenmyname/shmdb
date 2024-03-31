@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
                     }
                     case 7:
                     {
-                        *((float *)(value)) = strtod(optarg);
+                        *((float *)(value)) = strtod(optarg, NULL);
                         printf("double optarg: %s\n", optarg);
                         printf("value: %lf\n", *((double *)value));
                         break;

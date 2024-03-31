@@ -30,3 +30,8 @@ utils/vmutils/CMakeFiles/vmget.dir/link.txt
 utils/vmutils/CMakeFiles/vmset.dir/depend.make
 utils/vmutils/CMakeFiles/vmset.dir/flags.make
 utils/vmutils/CMakeFiles/vmset.dir/link.txt
+output/output/bin/
+output/output/include/byte_types.h
+output/output/include/customization_vm.h
+output/output/include/list.h
+output/output/lib/libbasedb.so

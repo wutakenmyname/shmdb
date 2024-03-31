@@ -128,7 +128,7 @@ static STATUS_T vm_lock_init()
     mprintf("going to get vm lock ready\n");
     vmdb_lock();
     vmdb_unlock();
-    mprintf("vm lock is ready");
+    mprintf("vm lock is ready\n");
     return STATUS_OK;
 }
 

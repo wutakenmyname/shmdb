@@ -168,6 +168,7 @@ STATUS_T vmdb_init_once()
         return STATUS_NOK;
     }
 
+    #if 0
     global_data->i8_member = 99;
     global_data->i16_member = -66;
     global_data->i32_member = 12343;
@@ -181,6 +182,7 @@ STATUS_T vmdb_init_once()
     global_data->d64_member = 7.77777;
     memset(global_data->string66, 0, sizeof(global_data->string66));
     memcpy(global_data->string66, "this is mok", strlen("this is mok"));
+    #endif
 
     return STATUS_OK;
 }

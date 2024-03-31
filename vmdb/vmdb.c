@@ -149,8 +149,8 @@ STATUS_T vmdb_get_data(data_type_t type, uint8 *value, int value_length)
         return STATUS_NOK;
     }
 
-    mprintf("uint32 member :%u\n", global_data->i32_member);
-    mprintf("float member: %f\n", global_data->f32_member);
+    mprintf("uint32 member :%u, addr: %p\n", global_data->i32_member, &(global_data->i32_member));
+    mprintf("float member: %f, addr :%p\n", global_data->f32_member, &(global_data->f32_member));
     {
         mprintf("print hex value for each byte from low address to high address: ");
         int i = 0;
@@ -160,7 +160,7 @@ STATUS_T vmdb_get_data(data_type_t type, uint8 *value, int value_length)
         }
         printf("\n");
     }
-    mprintf("type: %d, length: %d, offset:%d\n", type, value_length, get_data_offset(type));
+    mprintf("type: %d, length: %d, offset:%d, addr: %p\n", type, value_length, get_data_offset(type), (unsigned char *)global_data + get_data_offset(type));
     vmdb_lock();
     memcpy(value, (unsigned char *)global_data + get_data_offset(type), value_length);
     vmdb_unlock();

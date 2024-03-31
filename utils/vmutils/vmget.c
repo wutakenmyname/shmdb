@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
             }
             case 7:
             {
-                printf("value: %lf\n", *((double *)value));
+                printf("value: %.20lf\n", *((double *)value));
                 break;
             }
             case 8:

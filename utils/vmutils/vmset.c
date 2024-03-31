@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
                     {
                         *((double *)(value)) = strtod(optarg, NULL);
                         printf("double optarg: %s\n", optarg);
-                        printf("value: %lf\n", *((double *)value));
+                        printf("value: %.20lf\n", *((double *)value));
                         break;
                     }
                     case 8:

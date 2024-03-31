@@ -84,37 +84,37 @@ int main(int argc, char *argv[])
         {
             case 1:
             {
-                printf("value: %c\n", (char) *value);
+                printf("value: %c\n", *((char *)value));
                 break;
             }
             case 2:
             {
-                printf("value: %hhu\n", (uint8) *value);
+                printf("value: %hhu\n", *((uint8 *)value));
                 break;
             }
             case 3:
             {
-                printf("value: %hu\n", (uint16) *value);
+                printf("value: %hu\n", *((uint16 *)value));
                 break;
             }
             case 4:
             {
-                printf("value: %u\n", (uint32) *value);
+                printf("value: %u\n", *((uint32 *)value));
                 break;
             }
             case 5:
             {
-                printf("value: %llu\n", (uint64) *value);
+                printf("value: %llu\n", *((uint64 *)value));
                 break;
             }
             case 6:
             {
-                printf("value: %f\n", (float) *value);
+                printf("value: %f\n", *((float *)value));
                 break;
             }
             case 7:
             {
-                printf("value: %lf\n", (double) *value);
+                printf("value: %lf\n", *((double *)value));
                 break;
             }
             case 8:

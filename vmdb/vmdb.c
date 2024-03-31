@@ -45,7 +45,7 @@ uint16 get_data_size(data_type_t type)
     return vmdb_info[type].size;
 }
 
-unsigned char get_data_offset(data_type_t type)
+uint32 get_data_offset(data_type_t type)
 {
     return vmdb_info[type].offset;
 }

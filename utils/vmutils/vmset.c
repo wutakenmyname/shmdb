@@ -129,7 +129,6 @@ int main(int argc, char *argv[])
         return -1;
     }
     
-    
     if (vmdb_set_data(type, value, length) != STATUS_OK)
     {
         printf("set data failed\n");

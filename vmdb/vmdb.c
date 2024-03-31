@@ -29,7 +29,7 @@ base_db_t base_db;
 customization_t *global_data = NULL;
 unsigned char *generated_data = NULL;
 int generated_data_length = -1;
-int vmdb_sem_fd = -1;
+int vmdb_sem_id = -1;
 
 #define GET_OFFSET(mstruct, member) ((size_t) &(((mstruct *)0)->member))
 #define GET_SIZE(mstruct, member) sizeof(((mstruct *)0)->member)
@@ -88,7 +88,7 @@ STATUS_T vmdb_lock()
     sem_buf.sem_num = 0;
     sem_buf.sem_op = -1;
     sem_buf.sem_flg = SEM_UNDO;//系统退出前未释放信号量，系统自动释放
-    if (semop(vmdb_sem_fd, &sem_buf, 1) == -1) {
+    if (semop(vmdb_sem_id, &sem_buf, 1) == -1) {
         mprintf("lock vmdb sem failed\n");
         return STATUS_NOK;
     }
@@ -101,7 +101,7 @@ STATUS_T vmdb_unlock()
     sem_buf.sem_num = 0;
     sem_buf.sem_op = 1;
     sem_buf.sem_flg = SEM_UNDO;//系统退出前未释放信号量，系统自动释放
-    if (semop(vmdb_sem_fd, &sem_buf, 1) == -1) {
+    if (semop(vmdb_sem_id, &sem_buf, 1) == -1) {
         mprintf("unlock vmdb sem failed\n");
         return STATUS_NOK;
     }
@@ -110,16 +110,16 @@ STATUS_T vmdb_unlock()
 
 static STATUS_T vm_lock_init()
 {
-    vmdb_sem_fd = semget(sem_key, 1, IPC_CREAT | 0666);
-    if (vmdb_sem_fd < 0)
+    vmdb_sem_id = semget(sem_key, 1, IPC_CREAT | 0666);
+    if (vmdb_sem_id < 0)
     {
-        mprintf("semget failed, return value :%d\n", vmdb_sem_fd);
+        mprintf("semget failed, return value :%d\n", vmdb_sem_id);
         return STATUS_NOK;
     }
 
     union semun val;
     val.val = 1;
-    if (semctl(vmdb_sem_fd, 0, SETVAL, val) < 0)
+    if (semctl(vmdb_sem_id, 0, SETVAL, val) < 0)
     {
         mprintf("semctl failed\n");
         return STATUS_NOK;

@@ -65,7 +65,7 @@ typedef struct
     char file_base_path[FILE_BASE_PATH_LENGTH];
     DB_HASH_METHOD method;
     unsigned char *db_content;
-    int shm_fd;
+    int shm_id;
     int shm_size;
     struct list_head linker;
 } db_struct_t;
@@ -148,12 +148,12 @@ static db_struct_t *new_db_struct()
 
     if (db_struct == NULL)
     {
-        mprintf("[%s,%d] malloc failed\n");
+        mprintf("malloc failed\n");
         return NULL;
     }
 
     memset(db_struct, 0, sizeof(db_struct_t));
-    db_struct->shm_fd = -1;
+    db_struct->shm_id = -1;
     db_struct->have = HAVE_NO_FILE_BASE;
     db_struct->method = DB_HASH_MDTHOD_FIRST_VALID;
     db_struct->db = -1;
@@ -176,7 +176,7 @@ static db_struct_t *new_db_struct()
     return db_struct;
 }
 
-static delete_db_struct(db_struct_t *db_struct)
+static STATUS_T delete_db_struct(db_struct_t *db_struct)
 {
     if (db_struct == NULL)
     {
@@ -208,6 +208,7 @@ static delete_db_struct(db_struct_t *db_struct)
     list_del(temp);
 
     free(db_struct);
+    return STATUS_OK;
 }
 
 static db_struct_t *find_db_struct(base_db_t id)
@@ -215,7 +216,7 @@ static db_struct_t *find_db_struct(base_db_t id)
     db_struct_t *ret = NULL;
     db_struct_t *iterator = NULL;
     mprintf("db wanted id %d\n", id);
-    mprintf("db_collection addr: %p\n", db_collection);
+
     list_for_each_entry(iterator, &db_collection, linker)
     {
         mprintf("iterator addr: %p\n", iterator);
@@ -232,7 +233,7 @@ static db_struct_t *find_db_struct(base_db_t id)
 static STATUS_T prepare_shm(db_struct_t *db_struct)
 {
     STATUS_T ret = STATUS_NOK;
-    int shm_fd = -1;
+    int shm_id = -1;
     struct shmid_ds setting;
     void *shm_addr = NULL;
 
@@ -242,26 +243,26 @@ static STATUS_T prepare_shm(db_struct_t *db_struct)
         return STATUS_NOK;
     }
 
-    shm_fd = shmget(db_struct->db, db_struct->shm_size, IPC_CREAT | 0666);
-    if (shm_fd < 0)
+    shm_id = shmget(db_struct->db, db_struct->shm_size, IPC_CREAT | 0666);
+    if (shm_id < 0)
     {
         mprintf("get shm failed\n");
         return STATUS_NOK;
     }
 
-    if (shmctl(shm_fd, IPC_STAT, &setting) < 0)
+    if (shmctl(shm_id, IPC_STAT, &setting) < 0)
     {
         mprintf("get shm info failed\n");
         return STATUS_NOK;
     }
     setting.shm_segsz = db_struct->shm_size;
-    if (shmctl(shm_fd, IPC_SET, &setting))
+    if (shmctl(shm_id, IPC_SET, &setting))
     {
         mprintf("set shm params failed\n");
         return STATUS_NOK;
     }
 
-    shm_addr = shmat(shm_fd, NULL, 0);
+    shm_addr = shmat(shm_id, NULL, 0);
     if (shm_addr == (void *)-1)
     {
         mprintf("shm failed\n");

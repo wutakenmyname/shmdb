@@ -22,3 +22,11 @@ vmdb/Makefile
 vmdb/cmake_install.cmake
 vmdb/install_manifest.txt
 vmdb/libvmdb.so
+utils/vmutils/CMakeFiles/CMakeOutput.log
+utils/vmutils/CMakeFiles/Makefile.cmake
+utils/vmutils/CMakeFiles/vmget.dir/depend.make
+utils/vmutils/CMakeFiles/vmget.dir/flags.make
+utils/vmutils/CMakeFiles/vmget.dir/link.txt
+utils/vmutils/CMakeFiles/vmset.dir/depend.make
+utils/vmutils/CMakeFiles/vmset.dir/flags.make
+utils/vmutils/CMakeFiles/vmset.dir/link.txt
